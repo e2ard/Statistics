@@ -13,36 +13,20 @@ import org.jsoup.select.Elements;
 
 
 public class SourceReader {
-	private String siteName = "http://www.rentalcars.com/SearchResults.do?dropCity=Vilnius&doMinute=0&location=-1&driversAge=25&exSuppliers=&doHour=10&filterName=CarCategorisationSupplierFilter&locationName=Vilnius+%28All+areas%29+&searchType=allareasgeosearch&doFiltering=true&doMonthYear=7-2015&puSameAsDo=on&city=Vilnius&puMonthYear=7-2015&chinese-license=on&tj_pe_exp=t%3d1437064610703.e%3d22651-B%40hash%401437064867918%2c22656-B%40hash%401437064867917&puHour=10&dropCountry=Lithuania&puDay=18&filterTo=49&dropLocation=-1&doDay=19&dropLocationName=Vilnius+%28All+areas%29+&enabler=&country=Lithuania&filter_carclass=compact&advSearch=&filterAdditionalInfo=&filterFrom=0&puMonth=7&puMinute=0&doMonth=7&doYear=2015&puYear=2015&filterCoordinates=54.6333%2c25.2833";
-	
-	public String getUrlSource(String url) throws IOException {
-        URL yahoo = new URL(url);
-        URLConnection yc = yahoo.openConnection();
-        BufferedReader in = new BufferedReader(new InputStreamReader(
-                yc.getInputStream(), "UTF-8"));
-        String inputLine;
-        StringBuilder a = new StringBuilder();
-        while ((inputLine = in.readLine()) != null)
-            a.append(inputLine);
-        in.close();
 
-        return a.toString();
-    }
-	
-	public String getContent(String myUrl) throws IOException{
-		URL url = new URL(myUrl);
-		URLConnection conn = url.openConnection();
-		
-		BufferedReader br = new BufferedReader(
-                new InputStreamReader(conn.getInputStream()));
-		
-		return br.readLine().toString();
-	}
+	private String siteName = "http://www.rentalcars.com/SearchResults.do?dropCity=Vilnius&doMinute=0&location=-1&driversAge=25&doHour=10&filterName=CarCategorisationSupplierFilter&locationName=Vilnius+%28Visi+rajonai%29+&searchType=allareasgeosearch&doFiltering=true&puSameAsDo=on&city=Vilnius&puHour=10&dropCountryCode=&dropCountry=Lietuva&puDay=19&filterTo=49&dropLocation=-1&driverage=on&doDay=22&countryCode=&dropLocationName=Vilnius+%28Visi+rajonai%29+&country=Lietuva&enabler=&filterFrom=0&puMonth=7&puMinute=0&doMonth=7&doYear=2015&puYear=2015&fromLocChoose=true&filterCoordinates=54.6333%2c25.2833";
 	
 	public ArrayList<Offer> getTags(String className, String tag) throws IOException{
-
-		Document doc = Jsoup.connect(siteName).get();
-
+		
+		Sites site = new Sites();
+		System.out.println(site.getSiteName());
+		
+		Document doc = null;
+        try {
+            doc = Jsoup.connect(siteName).get();
+         } catch (IOException e) {
+            e.printStackTrace();
+        }
 		ArrayList<Offer> offers = new ArrayList<Offer>();
 
 		//get prices and suppliers
@@ -50,7 +34,7 @@ public class SourceReader {
 		Elements suppliers = doc.select("img[title]");
 		String[] price = null;
 		
-		if(prices.size() == suppliers.size()){
+		if(prices.size() == suppliers.size() && prices.size() != 0){
 			System.out.println("-->OK, PRICES EQUAL SUPPLIER NUM");
 			for (int i = 0; i < prices.size(); i++){
 				price = prices.get(i).text().replace(',', '.').split(" ");
@@ -59,11 +43,10 @@ public class SourceReader {
 				Offer offer = new Offer(ownPrice, supplier);
 				offers.add(offer);
 			}
+		}else{
+			System.out.println("-->getTags DATA NOT FOUND");
 		}
-		
-		
 		return offers;
-
 	}
 	
 
