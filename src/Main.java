@@ -9,16 +9,13 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		System.out.println("-->Main started");
-		
-		String className = ".car-result";
-		String tagName = "div";
+
 		SourceReader sr = new SourceReader();
+		Sites sites = new Sites();
+		String siteName = sites.getSiteName();
+		sr.getMinOffer(siteName);
 		
-		ArrayList<Offer> temp = sr.getTags(className, tagName);
 		
-		for(Offer e:temp){
-			System.out.println("\n" + e.toString() + '\n');
-		}
 		System.out.println("-->Main done");
 	}
 }
