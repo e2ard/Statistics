@@ -1,9 +1,18 @@
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.apache.http.NoHttpResponseException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class SourceReader {
 	
@@ -12,8 +21,8 @@ public class SourceReader {
         try {
         	doc = Jsoup.connect(siteName).timeout(0).get();
          } catch (IOException e) {
+            System.out.println("-->Something went wrong" + "\n" + siteName + ".");
             e.printStackTrace();
-            System.out.println("-->Something went wrong");
             return null;
         }
 		ArrayList<Offer> offers = new ArrayList<Offer>();
@@ -99,6 +108,68 @@ public class SourceReader {
 			System.out.println("-->NO RESULTS FOUND");
 		}
 		return null;
+	}
+	public static void getNorwOffers(){
+		org.jsoup.nodes.Document doc = null;
+		String site =
+				"https://cars.cartrawler.com/norwegian/en/book?clientID=242447&elID=0726201134239873913&countryID=LT&pickupID=3224&returnID=3224&pickupName=Vilnius%20Airport&returnName=Vilnius%20Airport&pickupDateTime=2015-09-01T10:00:00&returnDateTime=2015-09-02T10:00:00&age=30&curr=EUR&carGroupID=0&residenceID=LT&CT=AJ&referrer=0:&__utma=66135985.2092701990.1437977508.1437977508.1437977508.1&__utmb=66135985.3.10.1437977508&__utmc=66135985&__utmx=-&__utmz=66135985.1437977508.1.1.utmcsr&__utmv=-&__utmk=218255774#/vehicles";
+		try {
+//			System.out.println(site);
+
+//			String strURL = "https://www.checkmytrip.com" ;
+			java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
+			java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
+
+			try {
+				WebClient webClient = new WebClient(BrowserVersion.CHROME);
+			    webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+
+			    webClient.waitForBackgroundJavaScript(10 * 1000);
+			    HtmlPage myPage =  webClient.getPage(site);
+			    String theContent = myPage.asText();
+			    System.out.println(theContent);
+			    doc = Jsoup.parse(theContent);
+				Elements elems = doc.select("h2");
+//				webClient.close();
+				int tries = 0;
+				while(elems.size() == 0){
+					webClient.waitForBackgroundJavaScript(1000);
+				    myPage = webClient.getPage(site);
+				    
+				    theContent = myPage.asXml();
+				    doc = Jsoup.parse(theContent);
+				    System.out.println(theContent);
+					elems = doc.select("div.ct-grid.ct-relative");
+					
+					HashMap<String, Offer> map = new HashMap<String, Offer>();
+					if(elems.size() > 0){
+						System.out.println(elems.size());
+						for(Element e : elems){
+							Offer o = new Offer();
+							System.out.println(e.getElementsByClass("ct-no-margin-bottom").last().text());//category
+//							for()
+							Element temp = e.getElementsByClass("ct-padding-top").first();	
+							String supplier = temp.getElementsByTag("img").attr("alt").toString();
+							System.out.println(supplier);//suppliers
+							
+							String priceStr = e.getElementsByTag("h2").first().text();
+							
+						}
+						
+						
+					}
+				}
+			    
+			}catch (NoHttpResponseException ne){
+				System.out.println("-->Something went wrong1");
+			}
+			
+		} catch (IOException e) {
+			System.out.println("-->Something went wrong"); 
+			e.printStackTrace();
+	    }
+
+		
 	}
 	
 }

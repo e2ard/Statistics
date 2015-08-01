@@ -9,8 +9,8 @@ public class Sites {
 	private String siteName, pattern;
 	private String fileName = "E:\\eclipse\\Users\\Edvard\\workspace\\Statistics\\src\\site";
 	public ArrayList<String> sNames = new ArrayList<String>();
-	private String[] sClasses = {"economy", "compact", "intermediate", "standard", "full_size", "carriers_9"};
-	
+	private String[] sClasses = {"economy", "compact", "intermediate", "standard", "suvs", "carriers_9"};
+	public ArrayList<String> sites = new ArrayList<String>();
 	public Sites() {
 		super();
 		setSiteName();
@@ -21,7 +21,10 @@ public class Sites {
 	public String getSiteName() {
 		return siteName;
 	}
-
+	public void setSiteName(String str){
+		siteName = str;
+		pattern = str;
+	}
 	public void setSiteName() {
 			String sCurrentLine = null;
 			
@@ -30,9 +33,13 @@ public class Sites {
 				try{
 					
 					BufferedReader br = new BufferedReader(fr);
-					sCurrentLine = br.readLine();
+					while((sCurrentLine = br.readLine()) != null){
+						pattern = this.siteName = sCurrentLine;
+						sites.add(pattern);
+					}
 //					System.out.println(sCurrentLine);
-					pattern = this.siteName = sCurrentLine;
+					setSiteName(sites.get(0));
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -43,7 +50,7 @@ public class Sites {
 	}
 		
 	public ArrayList<String> getSiteNames(){
-		System.out.println("--> Number of sites found" + sNames.size());
+		System.out.println("--> Number of sites found " + sNames.size());
 		
 		return sNames;
 	}
@@ -55,8 +62,9 @@ public class Sites {
 		String dmx = "8";//mounth to
 		
 		siteName = siteName.replace("doDay=2", "doDay=" + Integer.toString(addDay));
-		System.out.println("--> Changed from:2" + "to  " + addDay);
+		System.out.println("--> Date Changed from:2" + "to  " + addDay);
 	}
+	
 	public void setCategories(){
 		sNames = new ArrayList<String>();
 		for(String str : sClasses){
@@ -67,9 +75,11 @@ public class Sites {
 		}
 		
 	}
+	
 	public void resetSiteName(){
 		siteName = pattern;
 	}
+	
 	private FileReader getFileReader(String fileName){
 		File f = new File(fileName);
 		if(f.exists() && !f.isDirectory()) {
@@ -84,7 +94,4 @@ public class Sites {
 		}
 		return null;
 	}
-	
-	
-
 }
