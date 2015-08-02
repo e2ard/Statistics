@@ -9,7 +9,8 @@ public class Sites {
 	private String siteName, pattern;
 	private String fileName = "E:\\eclipse\\Users\\Edvard\\workspace\\Statistics\\src\\site";
 	public ArrayList<String> sNames = new ArrayList<String>();
-	private String[] sClasses = {"economy", "compact", "intermediate", "standard", "suvs", "carriers_9"};
+	public static String[] sClasses = {"economy", "compact", "intermediate", "standard", "suvs", "carriers_9"};
+	public static String[] sNorwegian = {"Economym", "Economya", "Compactm", "Compacta", "Intermediatem", "Intermediatea", "Standardm", "Standarda", "SUVm", "SUVa", "9-seat minivanm"};
 	public ArrayList<String> sites = new ArrayList<String>();
 	public Sites() {
 		super();
@@ -21,10 +22,12 @@ public class Sites {
 	public String getSiteName() {
 		return siteName;
 	}
+	
 	public void setSiteName(String str){
 		siteName = str;
 		pattern = str;
 	}
+	
 	public void setSiteName() {
 			String sCurrentLine = null;
 			
@@ -70,8 +73,10 @@ public class Sites {
 		for(String str : sClasses){
 			String newSite = siteName.replace("economy", str);
 			sNames.add(newSite);
-			newSite = newSite.replace("Manual", "Automatic");
-			sNames.add(newSite);
+			if(!str.toLowerCase().equals("carriers_9")){
+				newSite = newSite.replace("Manual", "Automatic");
+				sNames.add(newSite);
+			}
 		}
 		
 	}

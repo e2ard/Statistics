@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.itextpdf.text.DocumentException;
 
@@ -30,7 +31,7 @@ public class StatisticGenerator {
 				
 
 				
-				for (String site : sNames){//for each get get min offer
+				for (String site : sNames){//for each category get get min offer
 					Offer o = sr.getMinOffer(site);
 					offers.add(o);//save offer to list
 					System.out.println("Offer site:" + "/n" + o.getSite() + '\n');
@@ -42,5 +43,25 @@ public class StatisticGenerator {
 			pdf.saveDocument();
 
 		}
+	}
+	public static void getNorwegian( ) throws IOException, DocumentException{
+		SourceReader sr = new SourceReader();
+		String source = 
+				"https://cars.cartrawler.com/norwegian/en/book?clientID=242447&elID=0726201134239873913&countryID=LT&pickupID=3224&returnID=3224&pickupName=Vilnius%20Airport&returnName=Vilnius%20Airport&pickupDateTime=2015-09-01T10:00:00&returnDateTime=2015-09-02T10:00:00&age=30&curr=EUR&carGroupID=0&residenceID=LT&CT=AJ&referrer=0:&__utma=66135985.2092701990.1437977508.1437977508.1437977508.1&__utmb=66135985.3.10.1437977508&__utmc=66135985&__utmx=-&__utmz=66135985.1437977508.1.1.utmcsr&__utmv=-&__utmk=218255774#/vehicles";
+		PdfBuilder pdf = new PdfBuilder(source);
+		
+		HashMap<String, ArrayList<Offer>> map = SourceReader.getNorwOffers();
+		
+		ArrayList<Offer> ofs = new ArrayList<Offer>();
+		for (String str : Sites.sNorwegian) {
+			ArrayList<Offer> offer = map.get(str);
+			ofs.add(sr.getMinOffer(offer, source));
+//			System.out.println("MainKey : " + entry.getKey() + " Value : "
+		}
+		pdf.addOffer(ofs, 1);
+		
+		pdf.finishGenerating();
+		pdf.saveDocument();
+		
 	}
 }

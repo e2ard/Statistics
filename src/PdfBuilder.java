@@ -41,8 +41,10 @@ public class PdfBuilder {
 	Elements elems = doc.select("#header-main > div.container > div > a");
 	if(elems.size() != 0){
 		source = elems.get(0).attr("href").toString();
-	}else{
+	}else if (doc.select("#header-main > div.container > a").size() != 0){
 		source = doc.select("#header-main > div.container > a").get(0).attr("href").toString();
+	}else{
+		source = "www.norwegian.com";
 	}
 	
   }
@@ -148,71 +150,81 @@ public class PdfBuilder {
 	c1.addElement(c);
 	table.addCell(c1);
 	
-	c1 = new PdfPCell(new Phrase());
-	c = new Chunk(offers.get(0).getOffer() != null ?offers.get(0).getOffer():"Tuðèia");
-	c.setAnchor(offers.get(0).getSite());
-	c1.addElement(c);
-	table.addCell(c1);
-
-	c1 = new PdfPCell(new Phrase());
-	c = new Chunk(offers.get(1).getOffer());
-	c.setAnchor(offers.get(1).getSite());
-	c1.addElement(c);
-	table.addCell(c1);
-    
-	c1 = new PdfPCell(new Phrase());
-	c = new Chunk(offers.get(2).getOffer());
-	c.setAnchor(offers.get(2).getSite());
-	c1.addElement(c);
-	table.addCell(c1);
-	
-    c1 = new PdfPCell(new Phrase(offers.get(3).getOffer()));
-    c = new Chunk(offers.get(3).getOffer());
-	c.setAnchor(offers.get(3).getSite());
-	c1.addElement(c);
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase(offers.get(4).getOffer()));
-    c = new Chunk(offers.get(4).getOffer());
-	c.setAnchor(offers.get(4).getSite());
-	c1.addElement(c);
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase(offers.get(5).getOffer()));
-    c = new Chunk(offers.get(5).getOffer());
-	c.setAnchor(offers.get(5).getSite());
-	c1.addElement(c);
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase(offers.get(6).getOffer()));
-    c = new Chunk(offers.get(6).getOffer());
-	c.setAnchor(offers.get(6).getSite());
-	c1.addElement(c);
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase(offers.get(7).getOffer()));
-    c = new Chunk(offers.get(7).getOffer());
-	c.setAnchor(offers.get(7).getSite());
-	c1.addElement(c);
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase(offers.get(8).getOffer()));
-    c = new Chunk(offers.get(8).getOffer());
-	c.setAnchor(offers.get(8).getSite());
-	c1.addElement(c);
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase(offers.get(9).getOffer()));
-    c = new Chunk(offers.get(9).getOffer());
-	c.setAnchor(offers.get(9).getSite());
-	c1.addElement(c);
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase(offers.get(10).getOffer()));
-    c = new Chunk(offers.get(10).getOffer());
-	c.setAnchor(offers.get(10).getSite());
-	c1.addElement(c);
-    table.addCell(c1);
+	for(int index = 0; index < offers.size(); index++){
+		c1 = new PdfPCell(new Phrase());
+		c = new Chunk(((offers != null) && (offers.size() > 0))?offers.get(index).getOffer():"Tuðèia");
+		c.setAnchor(offers.get(index).getSite());
+		c1.addElement(c);
+		table.addCell(c1);
+	}
+//	
+//	
+//	
+//	c1 = new PdfPCell(new Phrase());
+//	c = new Chunk(((offers != null) && (offers.size() > 0))?offers.get(0).getOffer():"Tuðèia");
+//	c.setAnchor(offers.get(0).getSite());
+//	c1.addElement(c);
+//	table.addCell(c1);
+//
+//	c1 = new PdfPCell(new Phrase());
+//	c = new Chunk(offers.get(1).getOffer());
+//	c.setAnchor(offers.get(1).getSite());
+//	c1.addElement(c);
+//	table.addCell(c1);
+//    
+//	c1 = new PdfPCell(new Phrase());
+//	c = new Chunk(offers.get(2).getOffer());
+//	c.setAnchor(offers.get(2).getSite());
+//	c1.addElement(c);
+//	table.addCell(c1);
+//	
+//    c1 = new PdfPCell(new Phrase(offers.get(3).getOffer()));
+//    c = new Chunk(offers.get(3).getOffer());
+//	c.setAnchor(offers.get(3).getSite());
+//	c1.addElement(c);
+//    table.addCell(c1);
+//    
+//    c1 = new PdfPCell(new Phrase(offers.get(4).getOffer()));
+//    c = new Chunk(offers.get(4).getOffer());
+//	c.setAnchor(offers.get(4).getSite());
+//	c1.addElement(c);
+//    table.addCell(c1);
+//    
+//    c1 = new PdfPCell(new Phrase(offers.get(5).getOffer()));
+//    c = new Chunk(offers.get(5).getOffer());
+//	c.setAnchor(offers.get(5).getSite());
+//	c1.addElement(c);
+//    table.addCell(c1);
+//    
+//    c1 = new PdfPCell(new Phrase(offers.get(6).getOffer()));
+//    c = new Chunk(offers.get(6).getOffer());
+//	c.setAnchor(offers.get(6).getSite());
+//	c1.addElement(c);
+//    table.addCell(c1);
+//    
+//    c1 = new PdfPCell(new Phrase(offers.get(7).getOffer()));
+//    c = new Chunk(offers.get(7).getOffer());
+//	c.setAnchor(offers.get(7).getSite());
+//	c1.addElement(c);
+//    table.addCell(c1);
+//    
+//    c1 = new PdfPCell(new Phrase(offers.get(8).getOffer()));
+//    c = new Chunk(offers.get(8).getOffer());
+//	c.setAnchor(offers.get(8).getSite());
+//	c1.addElement(c);
+//    table.addCell(c1);
+//    
+//    c1 = new PdfPCell(new Phrase(offers.get(9).getOffer()));
+//    c = new Chunk(offers.get(9).getOffer());
+//	c.setAnchor(offers.get(9).getSite());
+//	c1.addElement(c);
+//    table.addCell(c1);
+//    
+//    c1 = new PdfPCell(new Phrase(offers.get(10).getOffer()));
+//    c = new Chunk(offers.get(10).getOffer());
+//	c.setAnchor(offers.get(10).getSite());
+//	c1.addElement(c);
+//    table.addCell(c1);
   }
   
 }

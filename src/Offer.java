@@ -41,7 +41,11 @@ public class Offer {
 	}
 	
 	public String getSite() {
-		return site;
+		if(!(site == null)){
+			return site;
+		}else{
+			return "Nera";
+		}
 	}
 	
 	public Offer(float ownPrice, String supplier) {
