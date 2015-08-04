@@ -14,6 +14,8 @@ import org.jsoup.select.Elements;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class SourceReader {
@@ -157,6 +159,104 @@ public Offer getMinOffer(ArrayList<Offer> carResults, String siteName) throws IO
 		org.jsoup.nodes.Document doc = null;
 		HashMap<String, ArrayList<Offer>> map = new HashMap<String, ArrayList<Offer>>();
 		
+		try {
+			java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
+			java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
+
+			try {
+				WebClient webClient = new WebClient(BrowserVersion.CHROME);
+			    webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+
+			    webClient.waitForBackgroundJavaScript(10 * 1000);
+			    HtmlPage myPage =  webClient.getPage(site);
+			    String theContent = myPage.asText();
+			    System.out.println(theContent);
+			    doc = Jsoup.parse(theContent);
+				Elements elems = doc.select("h2");
+				while(elems.size() == 0){
+					webClient.waitForBackgroundJavaScript(1000);
+				    myPage = webClient.getPage(site);
+				    
+				    theContent = myPage.asXml();
+				    doc = Jsoup.parse(theContent);
+				    System.out.println(theContent);
+					elems = doc.select("div.ct-grid.ct-relative");
+					System.out.println(elems.size());
+					//--
+					ArrayList<HtmlElement> dmList= 
+							(ArrayList<HtmlElement>) myPage.getByXPath("/html/body/div[2]/div/section/div/div/div/div[2]/div[2]/div[3]/div/div[1]/div/ul");
+
+				    System.out.println(dmList.size());
+				    if(dmList.size() > 0){
+				    	for(HtmlElement he : dmList.get(0).getElementsByTagName("li")){
+				    		myPage = he.click();
+				    		Document tempDoc = Jsoup.parse(myPage.asXml());
+				    		Elements tempElems = tempDoc.select("div.ct-grid.ct-relative");
+				    		System.out.println(tempElems.size());
+				    		for(Element e : tempElems){
+				    			String category = e.getElementsByClass("ct-no-margin-bottom").last().text();//get category
+//								System.out.println(category);
+								String transmission = e.getElementsByClass("ct-grid").text();
+//								System.out.println(transmission);
+//								System.out.println(transmission.contains("Manual"));
+								
+								String catTrans = null;
+								if(transmission.contains("Manual")){
+									catTrans = category.toLowerCase() + "m";
+//									System.out.println("transmission works m: " + catTrans);
+								}else{
+									catTrans = category.toLowerCase() + "a";
+//									System.out.println("transmission works a: " + catTrans);
+								}
+							
+								Element temp = e.getElementsByClass("ct-padding-top").first();//get supplier 	
+								String supplier = temp.getElementsByTag("img").attr("alt").toString();
+								String priceStr = e.getElementsByTag("h2").first().text();
+								String[] price = priceStr.replace(",","").split(" ");
+								try{
+									float ownPrice = Float.parseFloat(price[1]);// get price
+									Offer o = new Offer(ownPrice, supplier);
+//									System.out.print(o.toString());
+//									System.out.println(supplier + " " + ownPrice);
+									for(String s : Sites.sNorwegian){
+										// if null initialize
+										if(map.get(s) == null){
+											map.put(s, new ArrayList<Offer>());
+										}
+										
+										if(catTrans.toLowerCase().equals(s.toLowerCase())){
+											System.out.println(o.toString() + " added.");
+											map.get(s).add(o);
+										}else{
+											
+										}
+									}
+								}catch(NumberFormatException nfe){
+									System.out.println("-->Ilegal number format" + nfe.getMessage());
+								}
+							}
+				    	}
+					}
+				}
+				webClient.close();
+			}catch (NoHttpResponseException ne){
+				System.out.println("-->Not http response" + ne.getMessage());
+			}
+			
+		} catch (IOException e) {
+			System.out.println("-->Something went wrong" + e.getMessage()); 
+			e.printStackTrace();
+	    }
+		for (Entry<String, ArrayList<Offer>> entry : map.entrySet()) {
+			System.out.println("Key : " + entry.getKey() + " Value : "
+				+ entry.getValue().toString());
+		}
+		return map;
+	}
+	public static HashMap<String, ArrayList<Offer>> getNorwOffersClick(String site){
+		org.jsoup.nodes.Document doc = null;
+		HashMap<String, ArrayList<Offer>> map = new HashMap<String, ArrayList<Offer>>();
+		
 //		String site =
 //				"https://cars.cartrawler.com/norwegian/en/book?clientID=242447&elID=0726201134239873913&countryID=LT&pickupID=3224&returnID=3224&pickupName=Vilnius%20Airport&returnName=Vilnius%20Airport&pickupDateTime=2015-09-01T10:00:00&returnDateTime=2015-09-02T10:00:00&age=30&curr=EUR&carGroupID=0&residenceID=LT&CT=AJ&referrer=0:&__utma=66135985.2092701990.1437977508.1437977508.1437977508.1&__utmb=66135985.3.10.1437977508&__utmc=66135985&__utmx=-&__utmz=66135985.1437977508.1.1.utmcsr&__utmv=-&__utmk=218255774#/vehicles";
 		try {
@@ -177,61 +277,33 @@ public Offer getMinOffer(ArrayList<Offer> carResults, String siteName) throws IO
 			    doc = Jsoup.parse(theContent);
 				Elements elems = doc.select("h2");
 //				webClient.close();
-				int tries = 0;
 				while(elems.size() == 0){
 					webClient.waitForBackgroundJavaScript(1000);
 				    myPage = webClient.getPage(site);
 				    
 				    theContent = myPage.asXml();
 				    doc = Jsoup.parse(theContent);
-				    System.out.println(theContent);
+				    ArrayList<HtmlElement> dmList= (ArrayList<HtmlElement>) myPage.getByXPath("/html/body/div[2]/div/section/div/div/div/div[2]/div[2]/div[3]/div/div[1]/div/ul");
+
+				    System.out.println(dmList.size());
+				    if(dmList.size() > 0){
+				    	for(HtmlElement he : dmList.get(0).getElementsByTagName("li")){
+//				    		System.out.println(he.asText());
+				    		myPage = he.click();
+				    		Document tempDoc = Jsoup.parse(myPage.asXml());
+				    		Elements tempElems = tempDoc.select("div.ct-grid.ct-relative");
+				    		System.out.println(tempElems.size());
+				    		for(Element e : tempElems){
+				    			String category = e.getElementsByClass("ct-no-margin-bottom").last().text();//get category
+				    			Element supplierElem = e.getElementsByClass("ct-padding-top").first();
+				    			String supplier = supplierElem.getElementsByTag("img").attr("alt").toString();
+				    			System.out.println(category + " category " + supplier + "suplier");
+				    		}
+				    	}
+					}
 					elems = doc.select("div.ct-grid.ct-relative");
 					System.out.println(elems.size());
-					if(elems.size() > 0){
-						System.out.println(elems.size());
-						for(Element e : elems){
-							String category = e.getElementsByClass("ct-no-margin-bottom").last().text();//get category
-//							System.out.println(category);
-							String transmission = e.getElementsByClass("ct-grid").text();
-							System.out.println(transmission);
-							System.out.println(transmission.contains("Manual"));
-							
-							String catTrans = null;
-							if(transmission.contains("Manual")){
-								catTrans = category.toLowerCase() + "m";
-								System.out.println("transmission works m: " + catTrans);
-							}else{
-								catTrans = category.toLowerCase() + "a";
-								System.out.println("transmission works a: " + catTrans);
-							}
-						
-							Element temp = e.getElementsByClass("ct-padding-top").first();//get supplier 	
-							String supplier = temp.getElementsByTag("img").attr("alt").toString();
-							String priceStr = e.getElementsByTag("h2").first().text();
-							String[] price = priceStr.replace(",","").split(" ");
-							try{
-								float ownPrice = Float.parseFloat(price[1]);// get price
-								Offer o = new Offer(ownPrice, supplier);
-								System.out.print(o.toString());
-								System.out.println(supplier + " " + ownPrice);
-								for(String s : Sites.sNorwegian){
-									// if null initialize
-									if(map.get(s) == null){
-										map.put(s, new ArrayList<Offer>());
-									}
-									
-									if(catTrans.toLowerCase().equals(s.toLowerCase())){
-										System.out.println("transmission works");
-										map.get(s).add(o);
-									}else{
-										
-									}
-								}
-							}catch(NumberFormatException nfe){
-								System.out.println("-->Something went wrong1" + nfe.getMessage());
-							}
-						}
-					}
+					
 				}
 			}catch (NoHttpResponseException ne){
 				System.out.println("-->Something went wrong1" + ne.getMessage());

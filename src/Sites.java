@@ -59,10 +59,10 @@ public class Sites {
 	}
 	
 	public String setDate(int addDay){
-		String pdx = "1";//from
-		String ddx = "2";//to
-		String pmx = "8";//mounth from
-		String dmx = "8";//mounth to
+//		String pdx = "1";//from
+//		String ddx = "2";//to
+//		String pmx = "8";//mounth from
+//		String dmx = "8";//mounth to
 		
 		String doDay = Integer.toString(addDay);
 		if(addDay <= 9){

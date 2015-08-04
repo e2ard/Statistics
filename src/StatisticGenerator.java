@@ -13,7 +13,7 @@ public class StatisticGenerator {
 		Sites sites = new Sites();
 		//create source reader for reading site source
 		SourceReader sr = new SourceReader();
-		for (int index = 0; index < 3; index++){
+		for (int index = 2; index < 3; index++){
 			//create pdf with site name
 			PdfBuilder pdf = new PdfBuilder(sites.sites.get(index));
 			//ini days to count for
