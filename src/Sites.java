@@ -58,14 +58,23 @@ public class Sites {
 		return sNames;
 	}
 	
-	public void setDate(int addDay){
+	public String setDate(int addDay){
 		String pdx = "1";//from
 		String ddx = "2";//to
 		String pmx = "8";//mounth from
 		String dmx = "8";//mounth to
 		
-		siteName = siteName.replace("doDay=2", "doDay=" + Integer.toString(addDay));
+		String doDay = Integer.toString(addDay);
+		if(addDay <= 9){
+			doDay = "0" + addDay;
+		}
+		System.out.println(doDay);
+		siteName = siteName.replace("returnDateTime=2015-09-02", "returnDateTime=2015-09-" + doDay);
+		
+		siteName = siteName.replace("doDay=2", "doDay=" + doDay);
 		System.out.println("--> Date Changed from:2" + "to  " + addDay);
+		
+		return siteName;
 	}
 	
 	public void setCategories(){
@@ -73,6 +82,7 @@ public class Sites {
 		for(String str : sClasses){
 			String newSite = siteName.replace("economy", str);
 			sNames.add(newSite);
+			//escape PVAR
 			if(!str.toLowerCase().equals("carriers_9")){
 				newSite = newSite.replace("Manual", "Automatic");
 				sNames.add(newSite);

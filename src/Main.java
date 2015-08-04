@@ -10,13 +10,12 @@ public class Main {
 	public static void main(String[] args) throws IOException, DocumentException {
 		long startTime = System.currentTimeMillis();
 		System.out.println("-->Main started");
-		
 					
-//		StatisticGenerator.genABalticRCars();
+		StatisticGenerator.genABalticRCars();
 //		StatisticGenerator.getNorwegian();
 		
-////			System.out.println("MainKey : " + entry.getKey() + " Value : "
-////				+ entry.getValue().toString());
+//			System.out.println("MainKey : " + entry.getKey() + " Value : "
+//				+ entry.getValue().toString());
 //			
 		
 		
@@ -39,8 +38,15 @@ public class Main {
 //		}
 
 		String site =
-				"http://www.rentalcars.com/SearchResults.do;jsessionid=25DF0A5992ED8B04C0F46485CFC9E9C3.node315a?dropCity=Vilnius&doMinute=0&location=388026&driversAge=25&doHour=10&filterName=CarCategorisationSupplierFilter&locationName=Vilnius+Oro+Uostas&searchType=&doFiltering=false&doMonthYear=8-2015&puSameAsDo=on&city=Vilnius&puMonthYear=8-2015&chinese-license=on&tj_pe_exp=t%3D1437064610703.e%3D22651-B%40hash%401437064867918%2C22656-B%40hash%401437064867917%2C22358-A%40hash%401437408365248%2C22363-B%40hash%401437408365248&puHour=10&dropCountry=Lietuva&emptySearchResults=false&puDay=1&filterTo=1000&dropLocation=388026&doDay=2&dropLocationName=Vilnius+Oro+Uostas&enabler=&country=Lietuva&filterFrom=0&puMonth=8&puMinute=0&doMonth=8&doYear=2015&puYear=2015&filter_carclass=economy&filterAdditionalInfo=&advSearch=&exSuppliers=&ordering=recommended&filterTransmission=Manual";
-		site = site.replace(oldChar, newChar)
+				"https://cars.cartrawler.com/norwegian/en/book?clientID=242447&elID=0726201134239873913&countryID=LT&pickupID=3224&returnID=3224&pickupName=Vilnius%20Airport&returnName=Vilnius%20Airport&pickupDateTime=2015-09-01T10:00:00&returnDateTime=2015-09-02T10:00:00&age=30&curr=EUR&carGroupID=0&residenceID=LT&CT=AJ&referrer=0:&__utma=66135985.2092701990.1437977508.1437977508.1437977508.1&__utmb=66135985.3.10.1437977508&__utmc=66135985&__utmx=-&__utmz=66135985.1437977508.1.1.utmcsr&__utmv=-&__utmk=218255774#/vehicles";
+//		int day = 19;
+//		String doDay = Integer.toString(day);
+//		if(day <= 9){
+//			doDay = "0" + day;
+//		}
+//		System.out.println(doDay);
+//		site = site.replace("returnDateTime=2015-09-02", "returnDateTime=2015-09-" + doDay);
+		System.out.println(site);
 		long endTime = System.currentTimeMillis();
 		System.out.println("-->Main done" + "\n" + (endTime - startTime) / 1000);
 		
