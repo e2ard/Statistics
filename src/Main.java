@@ -6,7 +6,10 @@ public class Main {
 	public static void main(String[] args) throws IOException, DocumentException {
 		long startTime = System.currentTimeMillis();
 		System.out.println("-->Main started");
-					
+		
+		System.setProperty("https.proxyHost", "185.33.33.132");
+		System.setProperty("https.proxyPort", "8080");
+		
 		StatisticGenerator.genABalticRCars();
 		
 //			System.out.println("MainKey : " + entry.getKey() + " Value : "
