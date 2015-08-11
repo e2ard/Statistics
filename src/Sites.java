@@ -7,28 +7,28 @@ import java.util.ArrayList;
 
 public class Sites {
 	private String siteName, pattern;
-	private String fileName = "E:\\eclipse\\Users\\Edvard\\workspace\\Statistics\\src\\site";
-	public ArrayList<String> sNames = new ArrayList<String>();
+	private String fileName = "site";
+	public ArrayList<String> sNames = new ArrayList<String>();//generated site list
 	public static String[] sClasses = {"economy", "compact", "intermediate", "standard", "suvs", "carriers_9"};
 	public static String[] sNorwegian = {"Economym", "Economya", "Compactm", "Compacta", "Intermediatem", "Intermediatea", "Standardm", "Standarda", "SUVm", "SUVa", "9-seat minivanm"};
-	public ArrayList<String> sites = new ArrayList<String>();
+	public ArrayList<String> sites = new ArrayList<String>();//red from file sites
+	
 	public Sites() {
 		super();
-		setSiteName();
-		setDate(2);
+		readSiteNames();
 		setCategories();
 	}
 
 	public String getSiteName() {
-		return siteName;
+		return this.siteName;
 	}
 	
 	public void setSiteName(String str){
-		siteName = str;
+		this.siteName = str;
 		pattern = str;
 	}
 	
-	public void setSiteName() {
+	public void readSiteNames() {
 			String sCurrentLine = null;
 			
 			FileReader fr = getFileReader(fileName);
@@ -37,8 +37,7 @@ public class Sites {
 					
 					BufferedReader br = new BufferedReader(fr);
 					while((sCurrentLine = br.readLine()) != null){
-						pattern = this.siteName = sCurrentLine;
-						sites.add(pattern);
+						sites.add(sCurrentLine);
 					}
 //					System.out.println(sCurrentLine);
 					setSiteName(sites.get(0));
@@ -58,23 +57,28 @@ public class Sites {
 		return sNames;
 	}
 	
-	public String setDate(int addDay){
-//		String pdx = "1";//from
-//		String ddx = "2";//to
-//		String pmx = "8";//mounth from
-//		String dmx = "8";//mounth to
-		
-		String doDay = Integer.toString(addDay);
-		if(addDay <= 9){
-			doDay = "0" + addDay;
+	private String addZero(int num){
+		if(num > 9){
+			return "" + num;
+		}else{
+			return "0" + num;
 		}
-		System.out.println(doDay);
-		siteName = siteName.replace("returnDateTime=2015-09-02", "returnDateTime=2015-09-" + doDay);
 		
-		siteName = siteName.replace("doDay=2", "doDay=" + doDay);
-		System.out.println("--> Date Changed from:2" + "to  " + addDay);
+	}
+	
+	public String setDate(int year, int month, int day){
+
+		System.out.println(year + " " + month + " " + day);
+		//Norvegian
+		String dateToChange = "returnDateTime=201(\\d)-\\d\\d-\\d\\d";
+		String newDate = "returnDateTime=" + year + "-" + addZero(month) + "-" + addZero(day);
+		this.siteName = this.siteName.replaceAll(dateToChange, newDate);
+		//Rental Baltic
+		this.siteName = this.siteName.replaceAll("doDay=(\\d)*", "doDay=" + addZero(day));
+		this.siteName = this.siteName.replaceAll("doMonth=(\\d)*", "doMonth=" + addZero(month));
+//		System.out.println("--> Date Changed from:2" + "to  " + doDay + "\n" + "NOW SITE IS: " + "\n" + this.siteName);
 		
-		return siteName;
+		return this.siteName;
 	}
 	
 	public void setCategories(){

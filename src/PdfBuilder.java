@@ -22,7 +22,7 @@ public class PdfBuilder {
   Document document;
   String source;
 	
-  private static String FILE = "C:\\Users\\Edvard\\";
+  private static String FILE = "";
   
   public PdfBuilder(String site){
 	  setSource(site);
@@ -55,19 +55,19 @@ public class PdfBuilder {
   public void generatePdf(){
 	  try {
 	      document = new Document(PageSize.A4.rotate(), 0, 0, 0, 0);
-	      String[] sourceName;
+	      document.top(20);
 	      if (source.contains(".")) {
-	    	  sourceName = source.split("\\.");
+	    	  PdfWriter.getInstance(document, new FileOutputStream(FILE + source.split("\\.")[1] + ".pdf"));
+		      document.open();
+		      
+		      createTable();
     	  } else {
 	    	    throw new IllegalArgumentException("String " + source + " does not contain -");
     	  }
 	      
 	      
 //	      System.out.println(sourceName.length + "\n" + source + "\n" + FILE + source + ".pdf");
-	      PdfWriter.getInstance(document, new FileOutputStream(FILE + source.split("\\.")[1] + ".pdf"));
-	      document.open();
 	      
-	      createTable();
 	      
 	    } catch (Exception e) {
 	      e.printStackTrace();
