@@ -1,6 +1,8 @@
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
@@ -29,24 +31,36 @@ public class PdfBuilder {
 	  generatePdf();
   }
   
-  public void setSource(String site){
-	org.jsoup.nodes.Document doc = null;
-	try {
-//		System.out.println(site);
-		doc = Jsoup.connect(site).timeout(0).get();
-	} catch (IOException e) {
-      e.printStackTrace();
-      System.out.println("-->Something went wrong");
-	}
-	Elements elems = doc.select("#header-main > div.container > div > a");
-	if(elems.size() != 0){
-		source = elems.get(0).attr("href").toString();
-	}else if (doc.select("#header-main > div.container > a").size() != 0){
-		source = doc.select("#header-main > div.container > a").get(0).attr("href").toString();
-	}else{
-		source = "www.norwegian.com";
-	}
-	
+//  public void setSource(String site){
+//	org.jsoup.nodes.Document doc = null;
+//	try {
+////		System.out.println(site);
+//		doc = Jsoup.connect(site).timeout(0).get();
+//	} catch (IOException e) {
+//      e.printStackTrace();
+//      System.out.println("-->Something went wrong");
+//	}
+//	Elements elems = doc.select("#header-main > div.container > div > a");
+//	if(elems.size() != 0){
+//		source = elems.get(0).attr("href").toString();
+//	}else if (doc.select("#header-main > div.container > a").size() != 0){
+//		source = doc.select("#header-main > div.container > a").get(0).attr("href").toString();
+//	}else{
+//		source = "www.norwegian.com";
+//	}
+//	
+//  }
+  public String setSource(String site){
+		String str = ".*(\\.).{3}\\/";
+		Pattern pattern = Pattern.compile(str);
+		Matcher matcher = pattern.matcher(site);
+		if (matcher.find())
+		{
+			source = matcher.group(0);
+			return source = source.substring(0, source.length()-1);
+		}
+		
+		return "unknown"; 
   }
   public String getSource(){
 	  return source;
@@ -57,7 +71,7 @@ public class PdfBuilder {
 	      document = new Document(PageSize.A4.rotate(), 0, 0, 0, 0);
 	      document.top(20);
 	      if (source.contains(".")) {
-	    	  PdfWriter.getInstance(document, new FileOutputStream(FILE + source.split("\\.")[1] + ".pdf"));
+	    	  PdfWriter.getInstance(document, new FileOutputStream(FILE + source.split("/.")[1] + ".pdf"));
 		      document.open();
 		      
 		      createTable();
@@ -96,57 +110,19 @@ public class PdfBuilder {
      
     table.addCell(c1);
     
-    c1 = new PdfPCell(new Phrase("EDMR"));
-     
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase("EDAR"));
-     
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase("CDMR"));
-     
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase("CDAR"));
-     
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase("IDMR"));
-     
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase("IDAR"));
-     
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase("SDMR"));
-     
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase("SDAR"));
-     
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase("SUV"));
-     
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase("SUV A"));
-     
-    table.addCell(c1);
-    
-    c1 = new PdfPCell(new Phrase("PVMR"));
-     
-    table.addCell(c1);
+    for(String str : Sites.sPdfClasses){
+    	c1 = new PdfPCell(new Phrase());
+    	Chunk c = new Chunk(str);
+		c1.addElement(c);
+		table.addCell(c1);
+	}
     table.setHeaderRows(1);
     
   }
-  public void addOffer(ArrayList<Offer> offers, int day){
-	
-	
+  public void addOffersRow(ArrayList<Offer> offers, int day){
 	PdfPCell c1 = new PdfPCell(new Phrase());
-	Chunk c = new Chunk("09-" + "1/" + day);
+	Chunk c = new Chunk(Main.month + "-" + Main.pickupDay + "/" + day);
+	
 	c1.addElement(c);
 	table.addCell(c1);
 	
@@ -157,74 +133,6 @@ public class PdfBuilder {
 		c1.addElement(c);
 		table.addCell(c1);
 	}
-//	
-//	
-//	
-//	c1 = new PdfPCell(new Phrase());
-//	c = new Chunk(((offers != null) && (offers.size() > 0))?offers.get(0).getOffer():"Tuðèia");
-//	c.setAnchor(offers.get(0).getSite());
-//	c1.addElement(c);
-//	table.addCell(c1);
-//
-//	c1 = new PdfPCell(new Phrase());
-//	c = new Chunk(offers.get(1).getOffer());
-//	c.setAnchor(offers.get(1).getSite());
-//	c1.addElement(c);
-//	table.addCell(c1);
-//    
-//	c1 = new PdfPCell(new Phrase());
-//	c = new Chunk(offers.get(2).getOffer());
-//	c.setAnchor(offers.get(2).getSite());
-//	c1.addElement(c);
-//	table.addCell(c1);
-//	
-//    c1 = new PdfPCell(new Phrase(offers.get(3).getOffer()));
-//    c = new Chunk(offers.get(3).getOffer());
-//	c.setAnchor(offers.get(3).getSite());
-//	c1.addElement(c);
-//    table.addCell(c1);
-//    
-//    c1 = new PdfPCell(new Phrase(offers.get(4).getOffer()));
-//    c = new Chunk(offers.get(4).getOffer());
-//	c.setAnchor(offers.get(4).getSite());
-//	c1.addElement(c);
-//    table.addCell(c1);
-//    
-//    c1 = new PdfPCell(new Phrase(offers.get(5).getOffer()));
-//    c = new Chunk(offers.get(5).getOffer());
-//	c.setAnchor(offers.get(5).getSite());
-//	c1.addElement(c);
-//    table.addCell(c1);
-//    
-//    c1 = new PdfPCell(new Phrase(offers.get(6).getOffer()));
-//    c = new Chunk(offers.get(6).getOffer());
-//	c.setAnchor(offers.get(6).getSite());
-//	c1.addElement(c);
-//    table.addCell(c1);
-//    
-//    c1 = new PdfPCell(new Phrase(offers.get(7).getOffer()));
-//    c = new Chunk(offers.get(7).getOffer());
-//	c.setAnchor(offers.get(7).getSite());
-//	c1.addElement(c);
-//    table.addCell(c1);
-//    
-//    c1 = new PdfPCell(new Phrase(offers.get(8).getOffer()));
-//    c = new Chunk(offers.get(8).getOffer());
-//	c.setAnchor(offers.get(8).getSite());
-//	c1.addElement(c);
-//    table.addCell(c1);
-//    
-//    c1 = new PdfPCell(new Phrase(offers.get(9).getOffer()));
-//    c = new Chunk(offers.get(9).getOffer());
-//	c.setAnchor(offers.get(9).getSite());
-//	c1.addElement(c);
-//    table.addCell(c1);
-//    
-//    c1 = new PdfPCell(new Phrase(offers.get(10).getOffer()));
-//    c = new Chunk(offers.get(10).getOffer());
-//	c.setAnchor(offers.get(10).getSite());
-//	c1.addElement(c);
-//    table.addCell(c1);
   }
   
 }

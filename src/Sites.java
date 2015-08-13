@@ -8,9 +8,12 @@ import java.util.ArrayList;
 public class Sites {
 	private String siteName, pattern;
 	private String fileName = "site";
+	public static String[] sPdfClasses = {"EDMR", "EDAR", "CDMR", "CDAR", "IDMR", "IDAR", "SDMR", "SDAR", "SUV", "SUV A", "PVMR"};
 	public ArrayList<String> sNames = new ArrayList<String>();//generated site list
 	public static String[] sClasses = {"economy", "compact", "intermediate", "standard", "suvs", "carriers_9"};
 	public static String[] sNorwegian = {"Economym", "Economya", "Compactm", "Compacta", "Intermediatem", "Intermediatea", "Standardm", "Standarda", "SUVm", "SUVa", "9-seat minivanm"};
+//	public static String[] sScanner = {"EDMN", "EDMR", "EDAR", "CDAR","CDMR", "CWMR", "MDAR", "SDMR", "IDMR", };
+	public static String[] sScanner = {"Economym", "Economya", "Compactm", "Compacta", "Standard / intermediatem", "Standard / intermediatea", "Standardm", "Standarda", "SUVm", "SUVa", "9 seat people carrierm"};
 	public ArrayList<String> sites = new ArrayList<String>();//red from file sites
 	
 	public Sites() {
@@ -68,16 +71,15 @@ public class Sites {
 	
 	public String setDate(int year, int month, int day){
 
-		System.out.println(year + " " + month + " " + day);
-		//Norvegian
+		//Norvegian Scanner
 		String dateToChange = "returnDateTime=201(\\d)-\\d\\d-\\d\\d";
 		String newDate = "returnDateTime=" + year + "-" + addZero(month) + "-" + addZero(day);
 		this.siteName = this.siteName.replaceAll(dateToChange, newDate);
 		//Rental Baltic
 		this.siteName = this.siteName.replaceAll("doDay=(\\d)*", "doDay=" + addZero(day));
 		this.siteName = this.siteName.replaceAll("doMonth=(\\d)*", "doMonth=" + addZero(month));
-//		System.out.println("--> Date Changed from:2" + "to  " + doDay + "\n" + "NOW SITE IS: " + "\n" + this.siteName);
-		
+		System.out.println("--> Date Changed from:2" + "to  " + day + "\n" + "NOW SITE IS: " + "\n" + this.siteName);
+//		System.out.println(year + " " + month + " " + day);
 		return this.siteName;
 	}
 	
