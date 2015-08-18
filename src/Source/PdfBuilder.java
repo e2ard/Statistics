@@ -1,3 +1,4 @@
+package Source;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class PdfBuilder {
   Document document;
   String source;
 	
-  private static String FILE = "";
+  private static String FILE = "PDFS\\";
   
   public PdfBuilder(String site){
 	  setSource(site);
@@ -57,7 +58,11 @@ public class PdfBuilder {
 		if (matcher.find())
 		{
 			source = matcher.group(0);
-			return source = source.substring(0, source.length()-1);
+			source = source.substring(0, source.length()-1);
+			if (source.contains("rental")){
+				source = "http://www.airbaltic.com//";
+			}
+			return source ;
 		}
 		
 		return "unknown"; 
@@ -71,7 +76,7 @@ public class PdfBuilder {
 	      document = new Document(PageSize.A4.rotate(), 0, 0, 0, 0);
 	      document.top(20);
 	      if (source.contains(".")) {
-	    	  PdfWriter.getInstance(document, new FileOutputStream(FILE + source.split("/.")[1] + ".pdf"));
+	    	  PdfWriter.getInstance(document, new FileOutputStream(FILE + source.split("/.")[1] + Main.month + "-" + Main.pickupDay + "  Riga" + ".pdf"));
 		      document.open();
 		      
 		      createTable();
@@ -98,7 +103,7 @@ public class PdfBuilder {
 	 throws BadElementException {
     table = new PdfPTable(12);
 
-    PdfPCell c1 = new PdfPCell(new Phrase(source));
+    PdfPCell c1 = new PdfPCell(new Phrase(source + " / Riga"));
     c1.setColspan(12);
     
     table.setWidthPercentage(95);
@@ -120,15 +125,31 @@ public class PdfBuilder {
     
   }
   public void addOffersRow(ArrayList<Offer> offers, int day){
+	  if (offers == null){
+		  return;
+	  }
 	PdfPCell c1 = new PdfPCell(new Phrase());
-	Chunk c = new Chunk(Main.month + "-" + Main.pickupDay + "/" + day);
+	int puDay = (day + Main.pickupDay);
+	int month;
+	if(puDay > 31){
+		puDay = puDay % 31;
+	}
 	
+	month = Main.month;
+	
+	Chunk c = new Chunk(month + "-" + Main.pickupDay + "/" + puDay);
 	c1.addElement(c);
 	table.addCell(c1);
 	
 	for(int index = 0; index < offers.size(); index++){
-		c1 = new PdfPCell(new Phrase());
-		c = new Chunk(((offers != null) && (offers.size() > 0))?offers.get(index).getOffer():"Tuðèia");
+		c1 = new PdfPCell(new Phrase());;
+		String offer;
+		if((offers != null) && (offers.size() > 0)){
+			offer = offers.get(index).getOffer();
+		}else{
+			offer = "Tuðèia";
+		}
+		c = new Chunk(offer);
 		c.setAnchor(offers.get(index).getSite());
 		c1.addElement(c);
 		table.addCell(c1);

@@ -1,3 +1,4 @@
+package Source;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.NoHttpResponseException;
@@ -15,6 +17,7 @@ import org.apache.jasper.tagplugins.jstl.core.Set;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -30,8 +33,12 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLElement;
 
 import java.util.HashSet;
@@ -359,6 +366,198 @@ public class SourceReader {
 		}
 		driver.close();
 		return map;
+	}
+	public static void getHireMarket(String site){
+//	    site = "http://www.carhiremarket.com/liveoffers.aspx?Search_ID=1933080320";
+		        
+	    java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
+	    java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
+	   
+	            	
+	            	
+	    WebClient webClient = new WebClient(BrowserVersion.CHROME);
+	    webClient.getOptions().setJavaScriptEnabled(true);
+	    webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+	    webClient.waitForBackgroundJavaScript(3 * 1000);
+	    
+	    HtmlPage myPage = null;
+		try {
+			myPage = webClient.getPage(site);
+		} catch (FailingHttpStatusCodeException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		} catch (MalformedURLException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+	    
+	   //get page num count
+	    
+	    HtmlElement pageNumsElem = myPage.getFirstByXPath("/html/body/form/div[3]/div[2]/div[2]/div[2]/div[6]/div/span");
+//        System.out.println(pageNums.getChildElementCount());  
+        List<HtmlElement> elemList = pageNumsElem.getHtmlElementsByTagName("a");
+        HtmlElement next = null;
+        
+        //get offrers count 
+
+        String ofrsNum = "/html/body/form/div[3]/div[2]/div[2]/div[2]/div[2]/div/div[1]/div[1]/span/span";
+		HtmlElement ofrsNumCount = myPage.getFirstByXPath(ofrsNum);
+		System.out.println("ofrs num is "  + ofrsNumCount.asText());
+		
+		while(ofrsNumCount.asText().isEmpty()){
+			webClient.waitForBackgroundJavaScript(2000);
+	        ofrsNumCount = myPage.getFirstByXPath(ofrsNum);
+	        System.out.println("Counting");
+			
+		}
+		int offersNum = Integer.parseInt(ofrsNumCount.asText());
+		System.out.println("ofrs num is "  + offersNum);
+		
+        int num = 0;
+        int loopNum = 0;
+        int pageNum = pageNumsElem.getChildElementCount();
+        int loopCondition = 0;
+        
+        
+		PrintWriter writer = null;
+		try {
+			writer = new PrintWriter("output.html", "UTF-8");
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		HtmlPage tempPage = myPage;
+		boolean quit = true;
+//		while(quit)
+		{
+			
+	        while(loopCondition < elemList.size()){
+	        	System.out.println(loopNum++ + " Loop");
+	        	webClient.waitForBackgroundJavaScript(3000);
+	        	
+	        	
+				String offersStr = "/html/body/form/div[3]/div[2]/div[2]/div[2]/div[4]";
+				next = myPage.getFirstByXPath("/html/body/form/div[3]/div[2]/div[2]/div[2]/div[6]/div/a[2]");
+				
+				HtmlElement offers = myPage.getFirstByXPath(offersStr);
+				
+				System.out.println(offersNum + " " + num);
+				
+				HtmlElement tempPageOffers = tempPage.getFirstByXPath(offersStr);
+				System.out.println("Before Continue: " + offers.getChildElementCount() + " " + loopCondition + " " + tempPageOffers.getChildElementCount());
+				
+				
+				
+				if(!offers.equals(tempPageOffers)){
+					writer.println(tempPageOffers.asText() + "\n--temp offer ----" );
+					writer.println(offers.asText() + "\n---- offer ----" );
+					 writer.close();
+					Scanner keyboard = new Scanner(System.in);
+					String text= keyboard.nextLine();
+					System.out.println("Continue");
+					continue;
+				}
+				num += offers.getChildElementCount();
+				loopCondition++;
+				//----proceed data
+				
+//				System.out.println(elems.size());
+//				HtmlElement elems = offers; 
+				Document doc = Jsoup.parse(myPage.asXml());
+				List<Element> offerList = doc.select("div.offer.offerPkg2");
+				
+				System.out.println(offerList.size());
+				for(Element elem : offerList){
+					System.out.println(elem.attr("data-price").toString());//price
+					
+					String category = elem.select("div.category").text();
+					System.out.println(category);//category
+					
+					String transm = elem.select("ul.features li.transmission strong").text();
+					System.out.println(transm);//transmission
+					
+					Elements supplierElem = elem.select("a.btnLogo img[title]");
+					System.out.println(supplierElem.attr("title").toString());//supplier
+				}
+				
+				//--
+				try {
+					System.out.println("Click");
+					tempPage = next.click();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				pageNumsElem = myPage.getFirstByXPath("/html/body/form/div[3]/div[2]/div[2]/div[2]/div[6]/div/span");
+	            
+				System.out.println(pageNumsElem.getChildElementCount() + " " + pageNum);
+				
+				
+				System.out.println("num: " + num);
+				
+	        }
+	        ofrsNumCount = myPage.getFirstByXPath(ofrsNum);
+	        offersNum = Integer.parseInt(ofrsNumCount.asText());
+	        if(num == offersNum){
+	        	quit = false;
+	        }else{
+	        	loopCondition = 0;
+	        }
+		}
+       
+        System.out.println("offers found: " + num);
+ 
+           
+           
+//       //click select button    
+//           
+//           int tries = 0;
+//           HtmlElement select = myPage.getAnchorByText("Select");
+//           HtmlPage page;
+//		try {
+//			page = select.click();
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//           webClient.waitForBackgroundJavaScript(10000);
+//   
+//           
+//           
+//           String searchStr = "/html/body/form/div[3]/div[2]/div[1]/div[1]/div[1]/div[2]/p[5]/a/span[1]";
+//           HtmlElement search  = myPage.getFirstByXPath(searchStr);
+//           page =  search.click();
+//           System.out.println(myPage.getTitleText());
+//           
+//        
+//        
+//        while(myPage.getFirstByXPath(searchStr) != null){
+//     	  webClient.waitForBackgroundJavaScript(10000);
+//     	  System.out.println(page.getTitleText());
+//     	  System.out.println("select is displayed " + select.isDisplayed());
+//         
+//     	  System.out.println("search is displayed " + search.isDisplayed());
+//         
+//     	
+//     	  search  = myPage.getFirstByXPath(searchStr);
+//     	  System.out.println("select is displayed " + search.asXml());
+//     	  try {
+//			page =  search.click();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//     	   
+//        }	
+	                
+	              
+	    
+		
 	}
 	
 };

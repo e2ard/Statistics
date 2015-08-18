@@ -1,3 +1,4 @@
+package Source;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,6 +54,32 @@ public class Sites {
 				System.out.println("-->FILE READER NULL");
 			}
 	}
+	
+	public String readFile(String params) {
+		String sCurrentLine = null;
+		
+		FileReader fr = getFileReader(params);
+		if(fr != null){
+			try{
+				String param = "";
+				BufferedReader br = new BufferedReader(fr);
+				while((sCurrentLine = br.readLine()) != null){
+					param += sCurrentLine;
+				}
+				
+//				System.out.println(sCurrentLine);
+				return param;
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}else{
+			System.out.println("-->FILE READER NULL");
+		}
+		return sCurrentLine;
+		
+}
 		
 	public ArrayList<String> getSiteNames(){
 		System.out.println("--> Number of sites found " + sNames.size());
@@ -76,9 +103,31 @@ public class Sites {
 		String newDate = "returnDateTime=" + year + "-" + addZero(month) + "-" + addZero(day);
 		this.siteName = this.siteName.replaceAll(dateToChange, newDate);
 		//Rental Baltic
+		if (day > 31){
+			month++;
+			day = day % 31;
+		}
 		this.siteName = this.siteName.replaceAll("doDay=(\\d)*", "doDay=" + addZero(day));
 		this.siteName = this.siteName.replaceAll("doMonth=(\\d)*", "doMonth=" + addZero(month));
-		System.out.println("--> Date Changed from:2" + "to  " + day + "\n" + "NOW SITE IS: " + "\n" + this.siteName);
+		System.out.println("--> Date Changed from:" + "to  " + day + "\n" + "NOW SITE IS: " + "\n" + this.siteName);
+//		System.out.println(year + " " + month + " " + day);
+		return this.siteName;
+	}
+	
+	public String initDate(int year, int month, int day){
+
+		//Norvegian Scanner
+		String dateToChange = "pickupDateTime=201(\\d)-\\d\\d-\\d\\d";
+		String newDate = "pickupDateTime=" + year + "-" + addZero(month) + "-" + addZero(day);
+		this.siteName = this.siteName.replaceAll(dateToChange, newDate);
+		//Rental Baltic
+		if (day > 31){
+			month++;
+			day = day % 31;
+		}
+		this.siteName = this.siteName.replaceAll("puDay=(\\d)*", "puDay=" + addZero(day));
+		this.siteName = this.siteName.replaceAll("puMonth=(\\d)*", "puMonth=" + addZero(month));
+		System.out.println("--> Date Changed from:" + "to  " + day + "\n" + "initDateNOW SITE IS: " + "\n" + this.siteName);
 //		System.out.println(year + " " + month + " " + day);
 		return this.siteName;
 	}

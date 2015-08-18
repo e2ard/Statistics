@@ -1,3 +1,4 @@
+package Source;
 
 public class Offer {
 	private String supplier;
