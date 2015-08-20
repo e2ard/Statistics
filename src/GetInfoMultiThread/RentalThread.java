@@ -32,7 +32,7 @@ public class RentalThread extends Thread{
 		try {
 			offers = sr.getTags(threadName);
 			System.out.println(offers.size());
-			Thread.sleep(50);
+			Thread.sleep(150);
 		
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block

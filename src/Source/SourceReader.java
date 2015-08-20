@@ -45,7 +45,7 @@ import java.util.HashSet;
 public class SourceReader {
 	WebDriver driver;
 	
-	public ArrayList<Offer> getTags(String siteName) throws IOException{
+	public static ArrayList<Offer> getTags(String siteName) throws IOException{
 		Document doc = null;
         try {
         	doc = Jsoup.connect(siteName).timeout(0).get();
@@ -294,7 +294,7 @@ public class SourceReader {
 		HashMap<String, ArrayList<Offer>> map = new HashMap<String, ArrayList<Offer>>();//all offers
 		
 		LinkedHashSet<String> categories = new LinkedHashSet<String>();// unique categories
-		
+
 		Elements elems = tempDoc.select("div.ct-car.ct-box.ct-transparent"); // select cat elements
 		System.out.println(elems.size());
 		if (elems.size() > 0){
@@ -554,10 +554,87 @@ public class SourceReader {
 //		}
 //     	   
 //        }	
-	                
-	              
-	    
+	 }
+	public static HashMap<String, ArrayList<Offer>> getAirbaltic(String siteName) throws IOException{
+		Document doc = null;
+        try {
+        	doc = Jsoup.connect(siteName).timeout(0).get();
+         } catch (IOException e) {
+//            System.out.println("--> GETTAGS Something went wrong" + "\n" + siteName + ".");
+            e.printStackTrace();
+            return null;
+        }
+		ArrayList<Offer> offers = new ArrayList<Offer>();
 		
+		//get prices and suppliers
+//		Elements prices = doc.select("div.car-result.group div.car-result-r div.price div.dis div.dis-inner p.now");
+		Elements offerOnPage = doc.select("div.car-result");
+//		System.out.println(offerOnPage.size());
+		
+		HashMap<String, ArrayList<Offer>> map = new HashMap<String, ArrayList<Offer>>();
+		LinkedHashSet<String> categories = new LinkedHashSet<String>();// unique categories
+		
+		for(Element e : offerOnPage){
+//			System.out.println(e.select("p.now").text());
+//			System.out.println(e.select("div.supplier_id img[title]").attr("title").toString());
+//			System.out.println(e.select("span.class.mini").text());
+//			System.out.println();
+//			
+			String supplier = e.select("div.supplier_id img[title]").attr("title").toString();
+			String category = e.select("span.class.mini").text();
+			String transm = e.select("li.result_trans").text().toString().substring(0, 1);
+		
+//			System.out.println("-->TRANSMISSION " + transm);//transmission
+			
+			categories.add(category);
+			String catTransm = null;
+			if(transm.contains("M")){
+				catTransm = category.toLowerCase() + "m";
+//					System.out.println("transmission works m: " + catTrans);
+			}else{
+				catTransm = category.toLowerCase() + "a";
+//					System.out.println("transmission works a: " + catTrans);
+			}
+		
+			String priceStr = e.select("p.now").text();
+			
+			String[] price = priceStr.replace(",",".").split(" ");
+			try{
+				float ownPrice = Float.parseFloat(price[0]);// get price
+				Offer o = new Offer(ownPrice, supplier);
+	//					System.out.print(o.toString());
+	//					System.out.println(supplier + " " + ownPrice);
+				
+				for(String s : Sites.sAirbaltic){
+					// if null initialize
+					if(map.get(s) == null){
+						map.put(s, new ArrayList<Offer>());
+					}
+					s.replace("-", " ");
+//					System.out.println(catTransm + " " + s );
+					if(catTransm.toLowerCase().contains(s.toLowerCase())){
+						System.out.println(o.toString() + " added.");
+						map.get(s).add(o);
+					}else{
+						
+					}
+				}
+//				for (Entry<String, ArrayList<Offer>> entry : map.entrySet()) {
+//					System.out.println("Key : " + entry.getKey() + " Value : "
+//						+ entry.getValue().toString());
+//				}
+//				for (String s : categories) {
+//					System.out.print(s + ", ");
+//				}
+			}catch(NumberFormatException nfe){
+				System.out.println("-->Ilegal number format" + nfe.getMessage());
+			}
+		
+		}
+		
+		return map;
 	}
+
+
 	
 };

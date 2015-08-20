@@ -42,10 +42,15 @@ public class Main {
 //			System.out.println(s.initDate(Main.year, Main.month, Main.pickupDay));
 //			System.out.println(s.setDate(Main.year, Main.month, Main.pickupDay));
 //		}
-		for(int i = Main.pickupDay; i < 20; i++){
-			StatisticGenerator.genABalticRCars();
-			Main.pickupDay = i;
-		}
+		String site = 
+				"http://www.rentalcars.com/SearchResults.do;jsessionid=45DAA2FD5413E2B05737DEB1FD9F67A2.node413a?tj_pe_exp=t%3D1439931119387.e%3D24031-A%40hash%401439991434551%2C24286-A%40hash%401439931124864&enabler=&country=Lithuania&city=Vilnius&location=388026&puDay=23&puMonthYear=8-2015&puDay=23&puMonth=8&puYear=2015&puHour=10&puMinute=0&dropCountry=Lithuania&dropCity=Vilnius&dropLocation=388026&puSameAsDo=on&doDay=24&doMonthYear=8-2015&doDay=24&doMonth=8&doYear=2015&doHour=10&doMinute=0&chinese-license=on&searchType=&doFiltering=&filterTo=1000&filterFrom=0&emptySearchResults=false&driversAge=25&locationName=Vilnius+Airport&dropLocationName=Vilnius+Airport&showAllCars=true";
+		StatisticGenerator.getPdfFastBeta();
+		
+		//		for(int i = Main.pickupDay; i < 30 + pickupDay; i++){
+//			Main.pickupDay = i;
+//			if(pickupDay > 31)
+//				pickupDay = (i + pickupDay) % 31;
+//		}
 	    
 		
 		

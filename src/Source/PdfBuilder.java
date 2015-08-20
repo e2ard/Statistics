@@ -24,7 +24,7 @@ public class PdfBuilder {
   private PdfPTable table;
   Document document;
   String source;
-	
+  String city = "Vilnius";
   private static String FILE = "PDFS\\";
   
   public PdfBuilder(String site){
@@ -76,7 +76,7 @@ public class PdfBuilder {
 	      document = new Document(PageSize.A4.rotate(), 0, 0, 0, 0);
 	      document.top(20);
 	      if (source.contains(".")) {
-	    	  PdfWriter.getInstance(document, new FileOutputStream(FILE + source.split("/.")[1] + Main.month + "-" + Main.pickupDay + "  Riga" + ".pdf"));
+	    	  PdfWriter.getInstance(document, new FileOutputStream(FILE + source.split("/.")[1] + Main.month + "-" + Main.pickupDay + city + ".pdf"));
 		      document.open();
 		      
 		      createTable();
@@ -103,7 +103,7 @@ public class PdfBuilder {
 	 throws BadElementException {
     table = new PdfPTable(12);
 
-    PdfPCell c1 = new PdfPCell(new Phrase(source + " / Riga"));
+    PdfPCell c1 = new PdfPCell(new Phrase(source + city));
     c1.setColspan(12);
     
     table.setWidthPercentage(95);

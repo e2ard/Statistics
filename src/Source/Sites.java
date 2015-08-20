@@ -13,7 +13,7 @@ public class Sites {
 	public ArrayList<String> sNames = new ArrayList<String>();//generated site list
 	public static String[] sClasses = {"economy", "compact", "intermediate", "standard", "suvs", "carriers_9"};
 	public static String[] sNorwegian = {"Economym", "Economya", "Compactm", "Compacta", "Intermediatem", "Intermediatea", "Standardm", "Standarda", "SUVm", "SUVa", "9-seat minivanm"};
-//	public static String[] sScanner = {"EDMN", "EDMR", "EDAR", "CDAR","CDMR", "CWMR", "MDAR", "SDMR", "IDMR", };
+	public static String[] sAirbaltic = {"Economym", "Economya", "Compactm", "Compacta", "Intermediatem", "Intermediatea", "Standardm", "Standarda", "SUVm", "SUVa", "9-seat minivanm"};
 	public static String[] sScanner = {"Economym", "Economya", "Compactm", "Compacta", "Standard / intermediatem", "Standard / intermediatea", "Standardm", "Standarda", "SUVm", "SUVa", "9 seat people carrierm"};
 	public ArrayList<String> sites = new ArrayList<String>();//red from file sites
 	
