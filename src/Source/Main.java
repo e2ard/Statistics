@@ -2,11 +2,17 @@ package Source;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import javax.swing.JFrame;
+
+import GUI.GuiDMain;
 import GetInfoMultiThread.RentalThread;
 import Logging.LogIn;
 import Pricing.PricingManager;
@@ -15,36 +21,53 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.itextpdf.text.DocumentException;
 
 public class Main {
-	static int year = 2015;
-	static int month = 9;
-	static int pickupDay = 1;
-	
+//	public static int year = 2015;
+//	public static int doMonth = 8;
+//	public static int puMonth = 8;
+//	public static int puDay = 30, doDay = 31;
+//	public static int daysNum = 30;
+//	public static int daysPerDoc = 5;
+//	public static String cityName = " Vilnius";
 	public static void main(String[] args) throws IOException, DocumentException, ParseException {
 		long startTime = System.currentTimeMillis();
 		System.out.println("-->Main started");
+		//init date
+//		int nowDay = 29;
+//		int nowMonth = 9;
+//		int nowYear = 2015;
+//		
+		System.setProperty("https.proxyHost", "204.14.14.230");
+		System.setProperty("https.proxyPort", "8080");
 		
-//		System.setProperty("https.proxyHost", "204.14.14.230");
-//		System.setProperty("https.proxyPort", "8080");
+		JFrame window = new GuiDMain();
 		
-//		StatisticGenerator.genABalticRCars();
 		
-//		String rental = "http://www.rentalcars.com/SearchResults.do?dropCity=Vilnius&doMinute=0&location=388026&driversAge=25&doHour=10&searchType=&locationName=Vilnius+Airport&doFiltering=false&puSameAsDo=on&city=Vilnius&puHour=10&dropCountryCode=&dropCountry=Lithuania&puDay=1&filterTo=1000&dropLocation=388026&driverage=on&doDay=2&countryCode=&dropLocationName=Vilnius+Airport&country=Lithuania&enabler=&filterFrom=0&puMonth=9&puMinute=0&doMonth=9&doYear=2015&puYear=2015&fromLocChoose=true&filterName=CarCategorisationSupplierFilter";
-//		String norwegian = "https://cars.cartrawler.com/norwegian/en/book?clientID=242447&elID=0726201134239873913&countryID=LT&pickupID=3224&returnID=3224&pickupName=Vilnius%20Airport&returnName=Vilnius%20Airport&pickupDateTime=2015-09-01T10:00:00&returnDateTime=2015-09-02T10:00:00&age=30&curr=EUR&carGroupID=0&residenceID=LT&CT=AJ&referrer=0:&__utma=66135985.2092701990.1437977508.1437977508.1437977508.1&__utmb=66135985.3.10.1437977508&__utmc=66135985&__utmx=-&__utmz=66135985.1437977508.1.1.utmcsr&__utmv=-&__utmk=218255774#/vehicles";
-//
-//		Sites s = new Sites();
-//		s.setSiteName(rental);
-//		for(int i = 0; i < 20; i++){
-//			System.out.println(s.initDate(Main.year, Main.month, Main.pickupDay));
-//			System.out.println(s.setDate(Main.year, Main.month, Main.pickupDay));
+		
+//		String rental = "http://www.rentalcars.com/SearchResults.do?dropCity=Ryga&doMinute=0&location=1373298&driversAge=25&exSuppliers=&doHour=10&filterName=CarCategorisationSupplierFilter&searchType=&locationName=Ryga+Oro+Uostas&doFiltering=&doMonthYear=8-2015&puSameAsDo=on&city=Ryga&puMonthYear=8-2015&chinese-license=on&tj_pe_exp=t%3D1440097272269.e%3D24031-B%40hash%401440230056249%2C24286-A%40hash%401440097276086&puHour=10&dropCountry=Latvija&puDay=03&filterTo=1000&dropLocation=1373298&doDay=04&dropLocationName=Ryga+Oro+Uostas&enabler=&country=Latvija&filter_carclass=economy&advSearch=&filterAdditionalInfo=&filterFrom=0&puMonth=10&puMinute=0&doMonth=10&doYear=2015&puYear=2015&filterTransmission=Automatic";
+//		rental = "http://www.rentalcars.com/SearchResults.do;jsessionid=DE2574FFEFE06FF009AF4FAAA2368A0E.node226a?&dropCity=Vilnius&doMinute=0&cor=fr&location=14159&driversAge=25&exSuppliers=&doHour=10&locationName=Vilnius+Airport&city=Vilnius&page=SearchResults.do&puHour=10&preflang=en&dropCountry=Lithuania&affiliateCode=airbaltic&puDay=12&dropLocation=14159&doDay=2&dropLocationName=Vilnius+Airport&country=Lithuania&filter_carclass=economy&filterAdditionalInfo=&advSearch=&puMonth=9&puMinute=0&doMonth=9&doYear=2015&puYear=2015&filterTransmission=Manual";
+//		
+//		Calendar cal = Calendar.getIntance();
+//		cal.setPuDay(nowDay);
+//		cal.setPuMonth(nowMonth);
+//		cal.setPuYear(nowYear);
+//		
+//		StatisticGenerator sg = new StatisticGenerator();
+//		sg.getPdfFast(rental, 2);
+//		
+//		Set<String> letter = new HashSet<String>();
+//		letter.add("aab");
+//		letter.add("aa");
+//		System.out.println(letter.size());
+//		
+//		
+//		SourceReader sr = new SourceReader();
+//		sr.connectionTest(rental);
+//		sr.connectionTest1(rental);
+//		//		ArrayList<Offer> offers = sr.getTags(rental);
+//		for(Offer o : offers){
+//			System.out.println(o.toString());
+//			
 //		}
-//		s.setSiteName(norwegian);
-//		for(int i = 0; i < 20; i++){
-//			System.out.println(s.initDate(Main.year, Main.month, Main.pickupDay));
-//			System.out.println(s.setDate(Main.year, Main.month, Main.pickupDay));
-//		}
-		String site = 
-				"http://www.rentalcars.com/SearchResults.do;jsessionid=45DAA2FD5413E2B05737DEB1FD9F67A2.node413a?tj_pe_exp=t%3D1439931119387.e%3D24031-A%40hash%401439991434551%2C24286-A%40hash%401439931124864&enabler=&country=Lithuania&city=Vilnius&location=388026&puDay=23&puMonthYear=8-2015&puDay=23&puMonth=8&puYear=2015&puHour=10&puMinute=0&dropCountry=Lithuania&dropCity=Vilnius&dropLocation=388026&puSameAsDo=on&doDay=24&doMonthYear=8-2015&doDay=24&doMonth=8&doYear=2015&doHour=10&doMinute=0&chinese-license=on&searchType=&doFiltering=&filterTo=1000&filterFrom=0&emptySearchResults=false&driversAge=25&locationName=Vilnius+Airport&dropLocationName=Vilnius+Airport&showAllCars=true";
-		StatisticGenerator.getPdfFastBeta();
 		
 		//		for(int i = Main.pickupDay; i < 30 + pickupDay; i++){
 //			Main.pickupDay = i;
@@ -61,23 +84,7 @@ public class Main {
 //		String s3 =	"http://cars-scanner.com/en/?_c=fnd.default&clientID=334782&elID=0807212554181994514&pickupID=3224&returnID=3224&pickupName=Vilnius%20Airport&returnName=Vilnius%20Airport&pickupDateTime=2015-09-01T10:00:00&returnDateTime=2015-09-02T10:00:00&age=30&curr=EUR&carGroupID=0&residenceID=LT&CT=AJ&referrer=0:&utm_source=google&utm_medium=poisk&utm_content=price_compare&utm_campaign=global_words&_c=fnd.default&gclid=CJTS9ojnl8cCFfHJtAodF8EANg#book";
 //
 //		
-//		PdfBuilder pdf = new PdfBuilder(s1);
-//		System.out.println(pdf.getSource());
-//		
-//		PdfBuilder pdf1 = new PdfBuilder(s2);
-//		System.out.println(pdf1.getSource());
-//		
-//		PdfBuilder pdf2 = new PdfBuilder(s3);
-//		System.out.println(pdf2.getSource());
-//		SourceReader.getCarScanner();
-		
-//		try {
-//			SourceReader.getScannerSilenium();
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
+
 			
 		long endTime = System.currentTimeMillis();
 		System.out.println("-->Main done" + "\n" + (endTime - startTime) / 1000);

@@ -8,56 +8,55 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.http.NoHttpResponseException;
-import org.apache.jasper.tagplugins.jstl.core.Set;
+import org.jsoup.Connection.Method;
+import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.UnreachableBrowserException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
-import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.javascript.host.html.HTMLElement;
 
-import java.util.HashSet;
 public class SourceReader {
 	WebDriver driver;
 	
-	public static ArrayList<Offer> getTags(String siteName) throws IOException{
+	public static ArrayList<Offer> getTags(String siteName) {
 		Document doc = null;
+		Response res = null;
         try {
-        	doc = Jsoup.connect(siteName).timeout(0).get();
+        	res = Jsoup
+    			.connect(siteName)
+			    .timeout(0)
+			    .method(Method.POST)
+			    .execute();
+			
+		Map<String, String> cookies = res.cookies();
+
+		doc = Jsoup.connect(siteName).cookies(cookies).timeout(0).get();
+
          } catch (IOException e) {
-            System.out.println("--> GETTAGS Something went wrong" + "\n" + siteName + ".");
+            System.out.println("--> GETTAGS Not connected to:" + "\n" + siteName + ".");
             e.printStackTrace();
             return null;
         }
 		ArrayList<Offer> offers = new ArrayList<Offer>();
 		
 		//get prices and suppliers
-//		Elements prices = doc.select("div.car-result.group div.car-result-r div.price div.dis div.dis-inner p.now");
 		Elements prices = doc.select("div.dis-inner > p.now");
 		if(prices.size() == 0){
 			prices = doc.select("div.saving-included > p.now");
@@ -70,7 +69,7 @@ public class SourceReader {
 		String[] price = null;
 		
 		if(prices.size() == suppliers.size() && prices.size() != 0){
-//			System.out.println("-->OK, PRICES EQUAL SUPPLIER NUM");
+			System.out.println("-->SUPPLIERS SIZE" + suppliers.size());
 			for (int i = 0; i < suppliers.size(); i++){
 				
 				price = prices.get(i).text().replace(',', '.').split(" ");
@@ -78,13 +77,27 @@ public class SourceReader {
 				
 				String supplier = suppliers.get(i).attr("title");
 				Offer offer = new Offer(ownPrice, supplier);
+				
 				offer.setSite(siteName);
+				if(siteName == null){
+					System.out.println("------------------------------------------------------------------------------------NULL");
+				}
 				offers.add(offer);
 			}
 			if((prices.size() == suppliers.size()*2)&& prices.size() != 0){
-				PrintWriter writer = new PrintWriter("output.html", "UTF-8");
-				writer.println(doc.body());
-				writer.close();
+				PrintWriter writer;
+				try {
+					writer = new PrintWriter("output.html", "UTF-8");
+					writer.println(doc.body());
+					writer.close();
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 				System.out.println("---->CHECK OUTPUT");
 			}
 			suppliers = null;
@@ -104,6 +117,7 @@ public class SourceReader {
 		float minGMPrice = 9999999;
 		String minGMSupplier = null;
 		Offer offer = new Offer();
+		String site = null;
 		if(carResults != null){
 			for(Offer e : carResults){
 	
@@ -119,7 +133,6 @@ public class SourceReader {
 					minGMPrice = e.getPrice();
 					minGMSupplier = "GM ";
 				}
-				offer.setSite(e.getSite());
 			}
 			
 	//			System.out.println("-->getTags" + offer.getSite());
@@ -555,26 +568,28 @@ public class SourceReader {
 //     	   
 //        }	
 	 }
-	public static HashMap<String, ArrayList<Offer>> getAirbaltic(String siteName) throws IOException{
+	public HashMap<String, ArrayList<Offer>> getAirbaltic(String siteName) throws IOException{
 		Document doc = null;
         try {
         	doc = Jsoup.connect(siteName).timeout(0).get();
+        	
          } catch (IOException e) {
 //            System.out.println("--> GETTAGS Something went wrong" + "\n" + siteName + ".");
             e.printStackTrace();
             return null;
         }
-		ArrayList<Offer> offers = new ArrayList<Offer>();
 		
-		//get prices and suppliers
+        //get prices and suppliers
 //		Elements prices = doc.select("div.car-result.group div.car-result-r div.price div.dis div.dis-inner p.now");
-		Elements offerOnPage = doc.select("div.car-result");
-//		System.out.println(offerOnPage.size());
+//		Elements offersOnPage = doc.getElementsByClass("car-result"); 
+		Elements offersOnPage = doc.getElementsByAttributeValueContaining("class", "car-result group");
+		offersOnPage.remove(offersOnPage.size() - 1);
+		System.out.println("--NUM-->offers found " + offersOnPage.size());
 		
 		HashMap<String, ArrayList<Offer>> map = new HashMap<String, ArrayList<Offer>>();
 		LinkedHashSet<String> categories = new LinkedHashSet<String>();// unique categories
 		
-		for(Element e : offerOnPage){
+		for(Element e : offersOnPage){
 //			System.out.println(e.select("p.now").text());
 //			System.out.println(e.select("div.supplier_id img[title]").attr("title").toString());
 //			System.out.println(e.select("span.class.mini").text());
@@ -582,30 +597,45 @@ public class SourceReader {
 //			
 			String supplier = e.select("div.supplier_id img[title]").attr("title").toString();
 			String category = e.select("span.class.mini").text();
-			String transm = e.select("li.result_trans").text().toString().substring(0, 1);
+			String transm = e.select("li.result_trans").text();
 		
 //			System.out.println("-->TRANSMISSION " + transm);//transmission
+			if(transm.length() < 2){
+				PrintWriter writer = new PrintWriter("output.html", "UTF-8");
+				writer.println(doc.html() + "\n--temp offer ----" );
+				writer.close();
+			}
+			
+			transm = e.select("li.result_trans").text().toString().substring(0, 1);
 			
 			categories.add(category);
 			String catTransm = null;
-			if(transm.contains("M")){
+			if(transm.equals("M")){
 				catTransm = category.toLowerCase() + "m";
 //					System.out.println("transmission works m: " + catTrans);
 			}else{
+				
 				catTransm = category.toLowerCase() + "a";
 //					System.out.println("transmission works a: " + catTrans);
 			}
-		
 			String priceStr = e.select("p.now").text();
+//			if (priceStr.length() == 0)
+//				priceStr = e.select("div.saving-included > p.now").text();
 			
-			String[] price = priceStr.replace(",",".").split(" ");
+//			Elements prices = doc.select("div.dis-inner > p.now");
+//			if(prices.size() == 0){
+//				prices = doc.select("div.saving-included > p.now");
+//			}
+//			System.out.print(priceStr);
+			String[] price = priceStr.replaceAll(",",".").split(" ");
+			
 			try{
 				float ownPrice = Float.parseFloat(price[0]);// get price
 				Offer o = new Offer(ownPrice, supplier);
 	//					System.out.print(o.toString());
 	//					System.out.println(supplier + " " + ownPrice);
-				
-				for(String s : Sites.sAirbaltic){
+				o.setSite(siteName);
+				for(String s : Sites.sAirbalticLt){
 					// if null initialize
 					if(map.get(s) == null){
 						map.put(s, new ArrayList<Offer>());
@@ -627,14 +657,79 @@ public class SourceReader {
 //					System.out.print(s + ", ");
 //				}
 			}catch(NumberFormatException nfe){
-				System.out.println("-->Ilegal number format" + nfe.getMessage());
+				System.out.println(priceStr);
+				System.out.println("-->Ilegal number format"  + nfe.getMessage());
 			}
 		
 		}
-		
 		return map;
 	}
+	public int connectionTest(String siteName){
+		int num = 0;
+		Document doc = null;
+		Response res = null;
+		try {
+			res = Jsoup
+				    .connect(siteName)
+				    .timeout(0)
+				    .method(Method.GET)
+				    .execute();
+			
+			//This will get you cookies
+			Map<String, String> cookies = res.cookies();
 
+			//And this is the easieste way I've found to remain in session
+			doc = Jsoup.connect(siteName).timeout(0).cookies(cookies).get();
+			if(doc == null){
+				System.out.println("is null");
+			}else{
+				PrintWriter writer;
+				writer = new PrintWriter("test(cookie).html", "UTF-8");
+				writer.println(doc.body());
+				writer.close();
+//				System.out.println(doc.html());
+				
+			}
 
-	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return num;
+	}
+	public int connectionTest1(String siteName){
+		int num = 0;
+		Document doc = null;
+		Response res = null;
+		try {
+			res = Jsoup
+				    .connect(siteName)
+				    .timeout(0)
+				    .method(Method.POST)
+				    .execute();
+			
+			//This will get you cookies
+			Map<String, String> cookies = res.cookies();
+
+			//And this is the easieste way I've found to remain in session
+			doc = Jsoup.connect(siteName).timeout(0).get();
+			if(doc == null){
+				System.out.println("is null");
+			}else{
+				PrintWriter writer;
+				writer = new PrintWriter("test(no_cookie).html", "UTF-8");
+				writer.println(doc.body());
+				writer.close();
+//				System.out.println(doc.html());
+				
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return num;
+	}
 };

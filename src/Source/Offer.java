@@ -42,10 +42,11 @@ public class Offer {
 	}
 	
 	public String getSite() {
-		if(!(site == null)){
-			return site;
-		}else{
-			return "Nera";
+//		if(!(this.site == null))
+		{
+			return this.site;
+//		}else{
+//			return "--> getSite Nera";
 		}
 	}
 	
@@ -61,7 +62,7 @@ public class Offer {
 		if(!(supplier == null)){
 			return supplier + " " + price + "\n";
 		}else{
-			return "Nera";
+			return "--> toString Nera";
 		}
 	}
 	public String getOffer(){
@@ -72,8 +73,13 @@ public class Offer {
 		}
 	}
 	private String validate(String s, float f){
+		int strLen = 0;
 		if(s != null){
-			return Math.round(f*100.0f)/100.0f + " " + s.substring(0, 2);
+			if(s.length() > 2)
+				strLen = 3;
+			else
+				strLen = 2;
+			return Math.round(f*100.0f)/100.0f + " " + s.substring(0, strLen);
 		}else{
 			return "";
 		}
