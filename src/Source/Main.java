@@ -1,23 +1,6 @@
 package Source;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import javax.swing.JFrame;
-
-import GUI.GuiDMain;
-import GetInfoMultiThread.RentalThread;
-import Logging.LogIn;
-import Pricing.PricingManager;
-
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.itextpdf.text.DocumentException;
 
 public class Main {
@@ -39,7 +22,7 @@ public class Main {
 		System.setProperty("https.proxyHost", "204.14.14.230");
 		System.setProperty("https.proxyPort", "8080");
 		
-		JFrame window = new GuiDMain();
+//		JFrame window = new GuiDMain();
 		
 		
 		

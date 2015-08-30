@@ -35,7 +35,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 public class SourceReader {
 	WebDriver driver;
 	
-	public static ArrayList<Offer> getTags(String siteName) {
+	public ArrayList<Offer> getTags(String siteName) {
 		Document doc = null;
 		Response res = null;
         try {
@@ -117,7 +117,6 @@ public class SourceReader {
 		float minGMPrice = 9999999;
 		String minGMSupplier = null;
 		Offer offer = new Offer();
-		String site = null;
 		if(carResults != null){
 			for(Offer e : carResults){
 	
@@ -522,7 +521,7 @@ public class SourceReader {
 	        	loopCondition = 0;
 	        }
 		}
-       
+		webClient.close();
         System.out.println("offers found: " + num);
  
            
