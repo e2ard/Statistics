@@ -96,13 +96,16 @@ public void getPdfFast(String siteName, int docNum){
 		
 		Calendar cal = Calendar.getIntance();
 		
+		boolean suppliersAdded = false;
 		for (int docIndex = 0; docIndex < docNum; docIndex++){
 			sites.setSiteName(siteName);
+			
 			sites.initDate(cal.getPuYear(), cal.getPuMonth(), cal.getPuDay());
 			PdfBuilder pdf = new PdfBuilder(sites.getSiteName());
 			
 			
-			for(int i = 0; i < 15; i++){
+			
+			for(int i = 0; i < 19; i++){
 				cal.incDoDay();
 				sites.newDate(cal.getDoYear(), cal.getDoMonth(), cal.getDoDay());
 				sites.setCategories();
@@ -149,17 +152,19 @@ public void getPdfFast(String siteName, int docNum){
 			}
 			cal.incPuDay();
 			cal.reset();
-			
+			if(!suppliersAdded){
+				pdf.setSuppliers(sr.getSupliers(sites.getSiteName()));
+			}
 			pdf.finishGenerating();
 			pdf.saveDocument();
 		}
 		JOptionPane.showMessageDialog(null, "Baigta");
 		
 	}
-
+	
 	public static void AirBalticBeta(String siteName) throws DocumentException, IOException{
 		/* works fast but there are some  mistypes, example categories, suvs as standart. 
-		 * removes last element
+		 * drawbag: removes last element!
 		 * 
 		 * http://www.rentalcars.com/SearchResults.do?dropCity=Vilnius&doMinute=0&location=388026&driversAge=25&doHour=10&locationName
 		 * =Vilnius+Airport&searchType=&doFiltering=&doMonthYear=8-2015&puSameAsDo=on&city=Vilnius&puMonthYear=8-2015&chinese-license=

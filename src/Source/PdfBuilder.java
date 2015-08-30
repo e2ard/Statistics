@@ -12,6 +12,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.FontSelector;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -28,6 +29,7 @@ public class PdfBuilder {
   private Font font = FontFactory.getFont("Arial", 9, Font.NORMAL);
   private static int dayNum;
   private Calendar cal ;
+private String suppliersStr;
   
   public PdfBuilder(String site){
 	  dayNum = 1;
@@ -107,6 +109,10 @@ public class PdfBuilder {
   public void finishGenerating(){
 	  try {
 		document.add(table);
+		Paragraph p = new Paragraph();
+		p.add(new Phrase(suppliersStr));
+		p.setAlignment(Element.ALIGN_CENTER);
+		document.add(p);
 	} catch (DocumentException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
@@ -167,6 +173,9 @@ public class PdfBuilder {
 			c1.addElement(c);
 			table.addCell(c1);
 	  }
+  }
+  public void setSuppliers(String suppliers){
+	  this.suppliersStr = suppliers;
   }
 };
 
