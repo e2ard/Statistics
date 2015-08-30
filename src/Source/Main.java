@@ -15,9 +15,9 @@ public class Main {
 		long startTime = System.currentTimeMillis();
 		System.out.println("-->Main started");
 		//init date
-//		int nowDay = 29;
-//		int nowMonth = 9;
-//		int nowYear = 2015;
+		int nowDay = 29;
+		int nowMonth = 9;
+		int nowYear = 2015;
 //		
 		System.setProperty("https.proxyHost", "204.14.14.230");
 		System.setProperty("https.proxyPort", "8080");
@@ -26,17 +26,24 @@ public class Main {
 		
 		
 		
-//		String rental = "http://www.rentalcars.com/SearchResults.do?dropCity=Ryga&doMinute=0&location=1373298&driversAge=25&exSuppliers=&doHour=10&filterName=CarCategorisationSupplierFilter&searchType=&locationName=Ryga+Oro+Uostas&doFiltering=&doMonthYear=8-2015&puSameAsDo=on&city=Ryga&puMonthYear=8-2015&chinese-license=on&tj_pe_exp=t%3D1440097272269.e%3D24031-B%40hash%401440230056249%2C24286-A%40hash%401440097276086&puHour=10&dropCountry=Latvija&puDay=03&filterTo=1000&dropLocation=1373298&doDay=04&dropLocationName=Ryga+Oro+Uostas&enabler=&country=Latvija&filter_carclass=economy&advSearch=&filterAdditionalInfo=&filterFrom=0&puMonth=10&puMinute=0&doMonth=10&doYear=2015&puYear=2015&filterTransmission=Automatic";
-//		rental = "http://www.rentalcars.com/SearchResults.do;jsessionid=DE2574FFEFE06FF009AF4FAAA2368A0E.node226a?&dropCity=Vilnius&doMinute=0&cor=fr&location=14159&driversAge=25&exSuppliers=&doHour=10&locationName=Vilnius+Airport&city=Vilnius&page=SearchResults.do&puHour=10&preflang=en&dropCountry=Lithuania&affiliateCode=airbaltic&puDay=12&dropLocation=14159&doDay=2&dropLocationName=Vilnius+Airport&country=Lithuania&filter_carclass=economy&filterAdditionalInfo=&advSearch=&puMonth=9&puMinute=0&doMonth=9&doYear=2015&puYear=2015&filterTransmission=Manual";
+		String rental = "http://www.rentalcars.com/SearchResults.do?dropCity=Ryga&doMinute=0&location=1373298&driversAge=25&exSuppliers=&doHour=10&filterName=CarCategorisationSupplierFilter&searchType=&locationName=Ryga+Oro+Uostas&doFiltering=&doMonthYear=8-2015&puSameAsDo=on&city=Ryga&puMonthYear=8-2015&chinese-license=on&tj_pe_exp=t%3D1440097272269.e%3D24031-B%40hash%401440230056249%2C24286-A%40hash%401440097276086&puHour=10&dropCountry=Latvija&puDay=03&filterTo=1000&dropLocation=1373298&doDay=04&dropLocationName=Ryga+Oro+Uostas&enabler=&country=Latvija&filter_carclass=economy&advSearch=&filterAdditionalInfo=&filterFrom=0&puMonth=10&puMinute=0&doMonth=10&doYear=2015&puYear=2015&filterTransmission=Automatic";
+		rental = "http://www.rentalcars.com/SearchResults.do;jsessionid=DE2574FFEFE06FF009AF4FAAA2368A0E.node226a?&dropCity=Vilnius&doMinute=0&cor=fr&location=14159&driversAge=25&exSuppliers=&doHour=10&locationName=Vilnius+Airport&city=Vilnius&page=SearchResults.do&puHour=10&preflang=en&dropCountry=Lithuania&affiliateCode=airbaltic&puDay=12&dropLocation=14159&doDay=2&dropLocationName=Vilnius+Airport&country=Lithuania&filter_carclass=economy&filterAdditionalInfo=&advSearch=&puMonth=9&puMinute=0&doMonth=9&doYear=2015&puYear=2015&filterTransmission=Manual";
+		
+//		SourceReader sr = new SourceReader();
+//		sr.getSupliers(rental);
+		
+		
+		Calendar cal = Calendar.getIntance();
+		cal.setPuDay(nowDay);
+		cal.setPuMonth(nowMonth);
+		cal.setPuYear(nowYear);
+		
+		
+		StatisticGenerator sg = new StatisticGenerator();
+		sg.getPdfFast(rental, 1);
 //		
-//		Calendar cal = Calendar.getIntance();
-//		cal.setPuDay(nowDay);
-//		cal.setPuMonth(nowMonth);
-//		cal.setPuYear(nowYear);
-//		
-//		StatisticGenerator sg = new StatisticGenerator();
-//		sg.getPdfFast(rental, 2);
-//		
+		
+		
 //		Set<String> letter = new HashSet<String>();
 //		letter.add("aab");
 //		letter.add("aa");

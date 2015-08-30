@@ -6,11 +6,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.Set;
+
 import org.apache.http.NoHttpResponseException;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
@@ -730,5 +733,24 @@ public class SourceReader {
 		}
 		
 		return num;
+	}
+	public String getSupliers(String siteName){
+		String suppliers = "Suppliers on page found: ";
+		try {
+			Document doc = Jsoup.connect(siteName).timeout(0).get();
+
+			Elements children = doc.select("ul.filter_content.supplier-filter > li");
+			Element e = children.first();
+			
+			suppliers += e.text();
+			for(int i = 1; i < children.size(); i++, suppliers+=e.text()){
+				suppliers += ", ";
+				e = children.get(i);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return suppliers+= ".";
 	}
 };
