@@ -17,7 +17,7 @@ import com.gargoylesoftware.htmlunit.javascript.host.dom.Document;
 public class PricingManager {
 	
 	public void fillPrices(String siteName){
-		// info carsrent
+		
 //		File input = new File("E://Downloads//Mozila//FuseMetrix Enterprise Server - real time, all the time_failai//welcomeServ.htm");
 //		org.jsoup.nodes.Document doc = Jsoup.parse(input, "UTF-8");
 		
